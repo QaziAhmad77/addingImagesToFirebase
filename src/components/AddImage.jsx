@@ -20,6 +20,20 @@ const AddImage = () => {
     }
   };
 
+  const handleDrop = (event) => {
+    event.preventDefault();
+    const file = event.dataTransfer.files[0];
+    setFile(file);
+    if (file) {
+      const imageUrl = URL.createObjectURL(file);
+      setSelectedImage(imageUrl);
+    }
+  };
+
+  const handleDragOver = (event) => {
+    event.preventDefault();
+  };
+
   const uploadImage = async () => {
     if (File) {
       setLoading(true);
@@ -45,12 +59,14 @@ const AddImage = () => {
         setSelectedImage('');
         setFile('');
       } catch (error) {
+        setLoading(false);
         console.error('Error uploading image:', error);
       }
     }
   };
 
   console.log(selectedImage);
+
   return (
     <>
       <Link to="/getAllImages" className="text-blue-600 underline ml-2">
@@ -60,7 +76,11 @@ const AddImage = () => {
         Add A Picture Of You
       </h2>
       <div className="w-full text-black flex flex-col gap-4">
-        <div className="flex justify-center">
+        <div
+          className="flex justify-center"
+          onDrop={handleDrop}
+          onDragOver={handleDragOver}
+        >
           <label
             htmlFor="img"
             className="w-[284px] h-[284px] border-[1px] border-black rounded-[16px] bg-[#FFF] flex flex-col items-center justify-center cursor-pointer"
@@ -86,7 +106,9 @@ const AddImage = () => {
               />
             )}
             {!selectedImage && (
-              <span className="mt-2">Click to add an Image</span>
+              <span className="mt-2">
+                Click to add an Image or drag and drop
+              </span>
             )}
           </label>
         </div>

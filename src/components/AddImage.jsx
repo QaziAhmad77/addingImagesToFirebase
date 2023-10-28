@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import camera from '../../src/assets/camera.svg';
-import { getDownloadURL, getStorage, ref, uploadBytes } from 'firebase/storage';
-import { addDoc, collection, doc, setDoc } from 'firebase/firestore';
+import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
+import { collection, doc, setDoc } from 'firebase/firestore';
 import { db, storage } from '../Firebase/Firebase';
 import { Link } from 'react-router-dom';
 import Loader from './Loader';
@@ -23,22 +23,18 @@ const AddImage = () => {
   const uploadImage = async () => {
     if (File) {
       setLoading(true);
-      const storageRef = ref(storage, `images/${File.name}`); // Change the path as needed
+      const storageRef = ref(storage, `images/${File.name}`);
       try {
-        // Upload the image to Firebase Storage
         await uploadBytes(storageRef, File);
-        // Get the download URL of the uploaded image
         const downloadUrl = await getDownloadURL(storageRef);
 
-        // Reference the "images" collection and add a new document with an automatically generated ID
         const imageCollectionRef = collection(db, 'images');
         const newImageId = new Date().getTime().toString(); // Generate a custom ID
         const newImageRef = doc(imageCollectionRef, newImageId);
 
-        // Set the document data, including the ID attribute
         await setDoc(newImageRef, {
           imageUrl: downloadUrl,
-          id: newImageId, // Set the ID attribute to the same value as the document ID
+          id: newImageId,
         });
 
         console.log(
